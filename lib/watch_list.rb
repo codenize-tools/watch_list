@@ -1,5 +1,6 @@
-require 'watch_list/version'
+require 'uptimerobot'
 
-module WatchList
-  # Your code goes here...
-end
+module WatchList; end
+
+require 'watch_list/exporter'
+require 'watch_list/version'
