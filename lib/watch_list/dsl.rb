@@ -5,6 +5,7 @@ class WatchList::DSL
     end
 
     def parse(dsl, path, opts = {})
+      # XXX:
     end
   end # of class methods
 end
