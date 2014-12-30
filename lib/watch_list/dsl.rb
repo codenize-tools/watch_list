@@ -5,7 +5,7 @@ class WatchList::DSL
     end
 
     def parse(dsl, path, opts = {})
-      # XXX:
+      WatchList::DSL::Context.eval(dsl, path, opts).result
     end
   end # of class methods
 end
