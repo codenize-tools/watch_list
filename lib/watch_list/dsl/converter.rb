@@ -29,7 +29,7 @@ class WatchList::DSL::Converter
   private
 
   def output_monitors(monitors)
-    (monitors || []).map {|monitor|
+    (monitors || []).map {|friendlyname, monitor|
       output_monitor(monitor)
     }.join("\n\n")
   end
@@ -40,7 +40,7 @@ class WatchList::DSL::Converter
     monitor_type = WatchList::Monitor::Type.key(monitor[:Type]).to_sym
 
     output {|buf|
-      buf << "monitor #{monitor[:Friendlyname].inspect} do"
+      buf << "monitor #{monitor[:FriendlyName].inspect} do"
       buf << "  url #{monitor[:URL].inspect}"
       buf << "  interval #{monitor[:Interval].inspect}"
       buf << "  paused #{monitor[:Status].zero?}"

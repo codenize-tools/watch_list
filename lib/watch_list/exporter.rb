@@ -24,10 +24,14 @@ class WatchList::Exporter
 
   def normalize_monitors(monitors)
     monitors = monitors.fetch('monitors', {}).fetch('monitor', [])
+    monitor_hash = {}
 
-    monitors.map do |monitor|
-      {
-        :Friendlyname  => monitor['friendlyname'],
+    monitors.each do |monitor|
+      friendlyname = monitor['friendlyname']
+
+      monitor_hash[friendlyname] = {
+        :ID            => monitor['id'],
+        :FriendlyName  => friendlyname,
         :URL           => monitor['url'],
         :Type          => monitor['type'].to_i,
         :SubType       => nil_if_blank(monitor['subtype'], :to_i),
@@ -46,6 +50,8 @@ class WatchList::Exporter
         :Status        => monitor['status'].to_i,
       }
     end
+
+    monitor_hash
   end
 
   def normalize_alert_contacts(alert_contacts)
@@ -53,7 +59,8 @@ class WatchList::Exporter
 
     alert_contacts.map do |alert_contact|
       {
-        :Type => alert_contact['type'].to_i,
+        :ID    => alert_contact['id'],
+        :Type  => alert_contact['type'].to_i,
         :Value => alert_contact['value'],
       }
     end
