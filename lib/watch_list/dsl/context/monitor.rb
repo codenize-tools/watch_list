@@ -3,13 +3,16 @@ class WatchList::DSL::Context::Monitor
     @name = name
 
     @result = {
-      :paused         => false,
-      :alert_contacts => [],
+      :FriendlyName  => name,
+      :Paused        => false,
+      :AlertContacts => [],
     }
+
+    instance_eval(&block)
   end
 
   def result
-    [:URL, :Type].each do |key|
+    [:URL, :Interval, :Type].each do |key|
       raise %!Monitor `#{@name}`: "#{key.to_s.downcase}" is required! unless @result[key]
     end
 
@@ -19,6 +22,41 @@ class WatchList::DSL::Context::Monitor
   def url(value)
     raise %!Monitor `#{@name}`: "url" is invalid: #{value.inspect}! if value.nil?
     @result[:URL] = value.to_s
+  end
+
+  def interval(value)
+    raise %!Monitor `#{@name}`: "interval" is invalid: #{value.inspect}! unless value.kind_of?(Integer)
+    @result[:Interval] = value
+  end
+
+  def paused(value)
+    unless [TrueClass, FalseClass].any? {|i| value.kind_of?(i) }
+      raise %!Monitor `#{@name}`: "paused" is invalid: #{value.inspect}!
+    end
+
+    @result[:Paused] = value
+  end
+
+  def alert_contact(type, value)
+    if type.kind_of?(Integer)
+      alert_contact_type = type
+    else
+      alert_contact_type = WatchList::AlertContact::Type[type.to_s]
+    end
+
+    unless WatchList::AlertContact::Type.values.include?(alert_contact_type)
+      raise %!Monitor `#{@name}`: "alert_contact" type is invalid: #{type.inspect}!
+    end
+
+    raise %!Monitor `#{@name}`: "alert_contact" value is invalid: #{value.inspect}! if value.nil?
+
+    hash = {:Type => alert_contact_type, :Value => value.to_s}
+
+    if @result[:AlertContacts].include?(hash)
+      raise %!Monitor `#{@name}`: "alert_contact"(#{type}, #{value}) is already defined!
+    end
+
+    @result[:AlertContacts] << hash
   end
 
   def type(value, &block)
@@ -37,36 +75,6 @@ class WatchList::DSL::Context::Monitor
     type_class = WatchList::DSL::Context::Monitor::Type[value.to_s]
     raise "Monitor `#{@name}`: #{value.inspect} is unimplemented type" unless type_class
 
-    @result.merge(type_class.new(@name, &block).result)
-  end
-
-  def paused(value)
-    unless [TrueClass, FalseClas].any? {|i| value.kind_of?(i) }
-      raise %!Monitor `#{@name}`: "paused" is invalid: #{value.inspect}!
-    end
-
-    @result[:paused] = value
-  end
-
-  def alert_contact(type, value)
-    if type.kind_of?(Integer)
-      alert_contact_type = type
-    else
-      alert_contact_type = WatchList::AlertContent::Type[type.to_s]
-    end
-
-    unless WatchList::AlertContent::Type.values.include?(alert_contact_type)
-      raise %!Monitor `#{@name}`: "alert_contact" type is invalid: #{type.inspect}!
-    end
-
-    raise %!Monitor `#{@name}`: "alert_contact" value is invalid: #{value.inspect}! if value.nil?
-
-    hash = {:Type => alert_contacts, :Value => value.to_s}
-
-    if @alert_contacts.include?(hash)
-      raise %!Monitor `#{@name}`: "alert_contact"(#{type}, #{value}) is already defined!
-    end
-
-    @result[:alert_contacts] << hash
+    @result.update(type_class.new(@name, &block).result)
   end
 end

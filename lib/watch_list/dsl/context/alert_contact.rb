@@ -1,11 +1,12 @@
-class WatchList::DSL::Context::AlertContent
+class WatchList::DSL::Context::AlertContact
   def initialize(&block)
     @result = {}
+    instance_eval(&block)
   end
 
   def result
     [:Type, :Value].each do |key|
-      raise %!AlertContent: "#{key.to_s.downcase}" is required! unless @result[key]
+      raise %!AlertContact: "#{key.to_s.downcase}" is required! unless @result[key]
     end
 
     @result
@@ -15,18 +16,18 @@ class WatchList::DSL::Context::AlertContent
     if value.kind_of?(Integer)
       alert_contact_type = value
     else
-      alert_contact_type = WatchList::AlertContent::Type[value.to_s]
+      alert_contact_type = WatchList::AlertContact::Type[value.to_s]
     end
 
-    unless WatchList::AlertContent::Type.values.include?(alert_contact_type)
-      raise %!AlertContent: "type" is invalid: #{value.inspect}!
+    unless WatchList::AlertContact::Type.values.include?(alert_contact_type)
+      raise %!AlertContact: "type" is invalid: #{value.inspect}!
     end
 
     @result[:Type] = alert_contact_type
   end
 
   def value(value)
-    raise %!AlertContent: "value" is invalid: #{value.inspect}! if value.nil?
+    raise %!AlertContact: "value" is invalid: #{value.inspect}! if value.nil?
     @result[:Value] = value.to_s
   end
 end

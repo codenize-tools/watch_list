@@ -3,7 +3,8 @@ class WatchList::DSL::Context::Monitor::Type
 
   class << self
     def inherited(child)
-      CHILDREN[child.to_s.downcase] = child
+      name = child.to_s.split('::').last.downcase
+      CHILDREN[name] = child
     end
 
     def [](name)
@@ -11,9 +12,10 @@ class WatchList::DSL::Context::Monitor::Type
     end
   end # of class methods
 
-  def initialize(monitor_name)
+  def initialize(monitor_name, &block)
     @monitor_name = monitor_name
     @result = {}
+    instance_eval(&block) if block
   end
 
   def result

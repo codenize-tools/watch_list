@@ -92,7 +92,7 @@ class WatchList::DSL::Converter
     alert_contact_type = WatchList::AlertContact::Type.key(alert_contact[:Type]).to_sym
 
     output {|buf|
-      buf << "alertcontact do"
+      buf << "alert_contact do"
       buf << "  type #{alert_contact_type.inspect}"
       buf << "  value #{alert_contact[:Value].inspect}"
       buf << "end"

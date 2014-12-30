@@ -12,7 +12,7 @@ class WatchList::DSL::Context
   def initialize(path, options = {}, &block)
     @path = path
     @options = options
-    @result = {}
+    @result = {:monitors => {}, :alert_contacts => []}
     instance_eval(&block)
   end
 
@@ -30,11 +30,11 @@ class WatchList::DSL::Context
 
   def monitor(name, &block)
     raise 'Monitor: "friendlyname" is required' unless name
-    raise "Monitor `#{name}` is already defined" if @result[name]
-    @result[friendlyname] << WatchList::DSL::Context::Monitor.new(name, &block).result
+    raise "Monitor `#{name}` is already defined" if @result[:monitors][name]
+    @result[:monitors][name] = WatchList::DSL::Context::Monitor.new(name, &block).result
   end
 
   def alert_contact(&block)
-    @result[friendlyname] << WatchList::DSL::Context::AlertContent.new(&block).result
+    @result[:alert_contacts] << WatchList::DSL::Context::AlertContact.new(&block).result
   end
 end
