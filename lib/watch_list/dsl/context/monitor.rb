@@ -12,15 +12,17 @@ class WatchList::DSL::Context::Monitor
   end
 
   def result
-    [:URL, :Interval, :Type].each do |key|
+    raise %!Monitor `#{@name}`: "target" is required! unless @result[:URL]
+
+    [:Interval, :Type].each do |key|
       raise %!Monitor `#{@name}`: "#{key.to_s.downcase}" is required! unless @result[key]
     end
 
     @result
   end
 
-  def url(value)
-    raise %!Monitor `#{@name}`: "url" is invalid: #{value.inspect}! if value.nil?
+  def target(value)
+    raise %!Monitor `#{@name}`: "target" is invalid: #{value.inspect}! if value.nil?
     @result[:URL] = value.to_s
   end
 

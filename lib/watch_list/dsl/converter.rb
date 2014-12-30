@@ -41,7 +41,7 @@ class WatchList::DSL::Converter
 
     output {|buf|
       buf << "monitor #{monitor[:FriendlyName].inspect} do"
-      buf << "  url #{monitor[:URL].inspect}"
+      buf << "  target #{monitor[:URL].inspect}"
       buf << "  interval #{monitor[:Interval].inspect}"
       buf << "  paused #{monitor[:Status].zero?}"
 
