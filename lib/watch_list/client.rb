@@ -16,6 +16,7 @@ class WatchList::Client
   def initialize(options = {})
     @options = options
     @uptimerobot = UptimeRobot::Client.new(:apiKey => options[:apiKey])
+    @driver = WatchList::Driver.new(@uptimerobot, options)
   end
 
   def export(opts = {})
