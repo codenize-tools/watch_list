@@ -2,7 +2,7 @@ class WatchList::DSL::Context
   class << self
     def eval(dsl, path, opts = {})
       self.new(path, opts) {
-        eval(dsl, binding, path)
+        Kernel.eval(dsl, binding, path)
       }
     end
   end # of class methods
