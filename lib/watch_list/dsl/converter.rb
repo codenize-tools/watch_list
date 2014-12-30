@@ -37,7 +37,7 @@ class WatchList::DSL::Converter
   def output_monitor(monitor)
     alert_contacts = monitor[:AlertContacts]
     has_type_attr  = TYPE_ATTRS.any? {|i| monitor[i] }
-    monitor_type = WatchList::Monitor::Type.key(monitor[:Type]).to_sym.inspect
+    monitor_type = WatchList::Monitor::Type.key(monitor[:Type]).to_sym
 
     output {|buf|
       buf << "monitor #{monitor[:Friendlyname].inspect} do"
@@ -50,7 +50,7 @@ class WatchList::DSL::Converter
       end
 
       buf << ""
-      buf << "  type #{monitor_type}" + (has_type_attr ? " do" : "")
+      buf << "  type #{monitor_type.inspect}" + (has_type_attr ? " do" : "")
 
       if has_type_attr
         output_monitor_type_attrs(monitor, buf)
@@ -63,10 +63,8 @@ class WatchList::DSL::Converter
 
   def output_monitor_alert_contacts(alert_contacts, buf)
     alert_contacts.each do |alert_contact|
-      type = alert_contact[:Type]
-      type = WatchList::AlertContact::Type.key(type).to_sym.inspect
-      value = alert_contact[:Value].inspect
-      buf << "  alert_contact #{type}, #{value}"
+      type = WatchList::AlertContact::Type.key(alert_contact[:Type]).to_sym
+      buf << "  alert_contact #{type.inspect}, #{alert_contact[:Value].inspect}"
     end
   end
 
@@ -91,11 +89,11 @@ class WatchList::DSL::Converter
   end
 
   def output_alert_contact(alert_contact)
-    alert_contact_type = WatchList::AlertContact::Type.key(alert_contact[:Type]).to_sym.inspect
+    alert_contact_type = WatchList::AlertContact::Type.key(alert_contact[:Type]).to_sym
 
     output {|buf|
       buf << "alertcontact do"
-      buf << "  type #{alert_contact_type}"
+      buf << "  type #{alert_contact_type.inspect}"
       buf << "  value #{alert_contact[:Value].inspect}"
       buf << "end"
     }.join("\n")
