@@ -92,6 +92,14 @@ class WatchList::Client
     delta = diff_monitor(expected, actual)
 
     unless delta.empty?
+      # Other parameter is required in order to update the "HTTPUsername" and "HTTPPassword"
+      delta[:Interval] ||= expected[:Interval]
+
+      # Remove by an empty parameter
+      delta.keys.each do |key|
+        delta[key] ||= ''
+      end
+
       # XXX: update monitor
       updated = true
     end
