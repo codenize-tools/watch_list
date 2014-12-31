@@ -85,6 +85,22 @@ class WatchList::Driver
     updated
   end
 
+  def pause_monitor(monitor_id, monitor_name, paused)
+    updated = false
+    log(:info, (paused ? 'Pause' : 'Unpause') + " Monitor: #{monitor_name}", :color => :green)
+
+    unless @options[:dry_run]
+      @uptimerobot.editMonitor(
+        :monitorID     => monitor_id,
+        :monitorStatus => (paused ? 0 : 1),
+      )
+
+      updated = true
+    end
+
+    updated
+  end
+
   private
 
   def describe_alert_contacts(attrs)

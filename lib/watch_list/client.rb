@@ -108,8 +108,7 @@ class WatchList::Client
     actual_pauced   = (actual[:Status] == UptimeRobot::Monitor::Status::Paused)
 
     if expected_paused != actual_pauced
-      # XXX: updated paused
-      updated = true
+      updated = @driver.pause_monitor(expected[:ID], expected[:FriendlyName], expected)
     end
 
     updated
