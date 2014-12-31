@@ -43,6 +43,7 @@ class WatchList::Driver
     log(:info, "Create Monitor: #{attrs[:FriendlyName]}", :color => :cyan)
 
     unless @options[:dry_run]
+      normalize_edit_attrs!(attrs)
       params = monitor_to_params(attrs, exist_alert_contacts)
       response = @uptimerobot.newMonitor(params)
       attrs[:ID] = response['monitor']['id']
@@ -131,5 +132,15 @@ class WatchList::Driver
     end
 
     params
+  end
+
+  def normalize_edit_attrs!(attrs)
+    # XXX: Other parameter is required in order to update the "HTTPUsername" and "HTTPPassword"
+    attrs[:Interval] ||= expected[:Interval]
+
+    # Remove by an empty parameter
+    attrs.keys.each do |key|
+      attrs[key] ||= ''
+    end
   end
 end

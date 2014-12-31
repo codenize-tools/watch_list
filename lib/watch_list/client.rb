@@ -96,14 +96,6 @@ class WatchList::Client
     delta = diff_monitor(expected, actual)
 
     unless delta.empty?
-      # Other parameter is required in order to update the "HTTPUsername" and "HTTPPassword"
-      delta[:Interval] ||= expected[:Interval]
-
-      # Remove by an empty parameter
-      delta.keys.each do |key|
-        delta[key] ||= ''
-      end
-
       updated = @driver.edit_monitor(expected[:ID], expected[:FriendlyName], delta, alert_contacts)
     end
 

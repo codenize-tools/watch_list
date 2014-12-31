@@ -91,6 +91,18 @@ begin
         open(output_file, 'wb') {|f| f.puts client.export }
       end
     end
+  when :apply
+    unless File.exist?(file)
+      raise "No Robotfile found (looking for: #{file})"
+    end
+
+    msg = "Apply `#{file}` to Uptime Robot"
+    msg << ' (dry-run)' if options[:dry_run]
+    logger.info(msg)
+
+    updated = client.apply(file)
+
+    logger.info('No change'.intense_blue) unless updated
   end
 rescue => e
   if options[:debug]
