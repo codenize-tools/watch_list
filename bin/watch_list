@@ -102,7 +102,11 @@ begin
 
     updated = client.apply(file)
 
-    logger.info('No change'.intense_blue) unless updated
+    if updated
+      logger.warn('[WARN] Update result reflected takes about 30 seconds'.yellow)
+    else
+      logger.info('No change'.intense_blue)
+    end
   end
 rescue => e
   if options[:debug]
