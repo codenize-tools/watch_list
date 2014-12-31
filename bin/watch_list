@@ -1,0 +1,81 @@
+#!/usr/bin/env ruby
+$: << File.expand_path("#{File.dirname __FILE__}/../lib")
+
+require 'rubygems'
+require 'watch_list'
+require 'optparse'
+
+Version = WatchList::VERSION
+DEFAULT_FILENAME = 'Robotfile'
+
+mode = nil
+file = DEFAULT_FILENAME
+output_file = '-'
+split = false
+
+options = {
+  :apiKey  => ENV['WATCH_LIST_API_KEY'],
+  :dry_run => false,
+  :color   => true,
+  :debug   => false,
+}
+
+ARGV.options do |opt|
+  begin
+    opt.on('',   '--api-key API_KEY') {|v| options[:apiKey]  = v       }
+    opt.on('-a', '--apply')           {    mode              = :apply  }
+    opt.on('-f', '--file FILE')       {|v| file              = v       }
+    opt.on(''  , '--dry-run')         {    options[:dry_run] = true    }
+    opt.on('-e', '--export')          {    mode              = :export }
+    opt.on(''  , '--split')           {    split             = true    }
+    opt.on('-o', '--output FILE')     {|v| output_file       = v       }
+    opt.on(''  , '--no-color')        {    options[:color]   = false   }
+    opt.on(''  , '--debug')           {    options[:debug]   = true    }
+
+    opt.on('-h', '--help') do
+      puts opt.help
+      exit 1
+    end
+
+    opt.parse!
+
+    unless mode
+      puts opt.help
+      exit 1
+    end
+
+    raise 'apiKey is required' unless options[:apiKey]
+  rescue => e
+    $stderr.puts("[ERROR] #{e.message}")
+    exit 1
+  end
+end
+
+String.colorize = options[:color]
+
+begin
+  logger = WatchList::Logger.instance
+  logger.set_debug(options[:debug])
+  client = WatchList::Client.new(options)
+
+  case mode
+  when :export
+    if split
+    else
+      if output_file == '-'
+        logger.info('# Export Uptime Robot')
+        puts client.export
+      else
+        logger.info("Export Uptime Robot to `#{output_file}`")
+        open(output_file, 'wb') {|f| f.puts client.export }
+      end
+    end
+  end
+rescue => e
+  if options[:debug]
+    raise e
+  else
+    $stderr.puts("[ERROR] #{e.message}".red)
+    exit 1
+  end
+end
