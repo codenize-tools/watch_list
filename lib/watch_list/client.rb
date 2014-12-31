@@ -19,20 +19,20 @@ class WatchList::Client
     @driver = WatchList::Driver.new(@uptimerobot, options)
   end
 
-  def export(opts = {})
-    exported = WatchList::Exporter.export(@uptimerobot, @options.merge(opts))
-    WatchList::DSL.convert(exported, @options.merge(opts))
+  def export
+    exported = WatchList::Exporter.export(@uptimerobot, @options)
+    WatchList::DSL.convert(exported, @options)
   end
 
-  def apply(file, opts = {})
-    walk(file, opts)
+  def apply(file)
+    walk(file)
   end
 
   private
 
-  def walk(file, opts = {})
+  def walk(file)
     expected = load_file(file)
-    actual   = WatchList::Exporter.export(@uptimerobot, @options.merge(opts))
+    actual   = WatchList::Exporter.export(@uptimerobot, @options)
 
     updated = walk_alert_contacts(expected[:alert_contacts], actual[:alert_contacts])
     walk_monitors(expected[:monitors], actual[:monitors]) || updated
@@ -102,6 +102,19 @@ class WatchList::Client
       end
 
       # XXX: update monitor
+      updated = true
+    end
+
+    walk_monitor_paused(expected, actual) || updated
+  end
+
+  def walk_monitor_paused(expected, actual)
+    updated = false
+    expected_paused = !!expected[:Paused]
+    actual_pauced   = (actual[:Status] == UptimeRobot::Monitor::Status::Paused)
+
+    if expected_paused != actual_pauced
+      # XXX: updated paused
       updated = true
     end
 

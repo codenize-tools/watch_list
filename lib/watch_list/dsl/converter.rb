@@ -38,12 +38,13 @@ class WatchList::DSL::Converter
     alert_contacts = monitor[:AlertContacts]
     has_type_attr  = TYPE_ATTRS.any? {|i| monitor[i] }
     monitor_type = WatchList::Monitor::Type.key(monitor[:Type]).to_sym
+    paused = (monitor[:Status] == UptimeRobot::Monitor::Status::Paused)
 
     output {|buf|
       buf << "monitor #{monitor[:FriendlyName].inspect} do"
       buf << "  target #{monitor[:URL].inspect}"
       buf << "  interval #{monitor[:Interval].inspect}"
-      buf << "  paused #{monitor[:Status].zero?}"
+      buf << "  paused #{paused.inspect}"
 
       unless alert_contacts.empty?
         output_monitor_alert_contacts(alert_contacts, buf)
