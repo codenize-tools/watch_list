@@ -1,4 +1,5 @@
 require 'tempfile'
+require 'term/ansicolor'
 require 'uptimerobot'
 
 module WatchList; end
@@ -19,4 +20,5 @@ require 'watch_list/dsl/context/monitor/port'
 require 'watch_list/dsl/context/monitor/ping'
 require 'watch_list/dsl/converter'
 require 'watch_list/exporter'
+require 'watch_list/ext/string_ext'
 require 'watch_list/version'
