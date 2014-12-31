@@ -29,6 +29,10 @@ class WatchList::Exporter
     monitors.each do |monitor|
       friendlyname = monitor['friendlyname']
 
+      # XXX: Port(4) returns `keywordtype=0`
+      keywordtype = nil_if_blank(monitor['keywordtype'], :to_i)
+      keywordtype = nil unless WatchList::Monitor::KeywordType.key(keywordtype)
+
       monitor_hash[friendlyname] = {
         :ID            => monitor['id'],
         :FriendlyName  => friendlyname,
@@ -36,7 +40,7 @@ class WatchList::Exporter
         :Type          => monitor['type'].to_i,
         :SubType       => nil_if_blank(monitor['subtype'], :to_i),
         :Port          => nil_if_blank(monitor['port'], :to_i),
-        :KeywordType   => nil_if_blank(monitor['keywordtype'], :to_i),
+        :KeywordType   => keywordtype,
         :KeywordValue  => nil_if_blank(monitor['keywordvalue']),
         :HTTPUsername  => nil_if_blank(monitor['httpusername']),
         :HTTPPassword  => nil_if_blank(monitor['httppassword']),
@@ -46,7 +50,7 @@ class WatchList::Exporter
             :Value => alert_contact['value'],
           }
         },
-        :Interval      => nil_if_blank(monitor['interval'], :to_i),
+        :Interval      => nil_if_blank(monitor['interval'], :to_i) / 60,
         :Status        => monitor['status'].to_i,
       }
     end

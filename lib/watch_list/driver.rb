@@ -67,6 +67,24 @@ class WatchList::Driver
     updated
   end
 
+  def edit_monitor(monitor_id, monitor_name, attrs, exist_alert_contacts)
+    updated = false
+    log(:info, "Update Monitor: #{monitor_name}", :color => :green)
+
+    attrs.each do |key, value|
+      log(:info, " set #{key}=#{value}", :color => :green)
+    end
+
+    unless @options[:dry_run]
+      params = monitor_to_params(attrs, exist_alert_contacts)
+      params[:monitorID] = monitor_id
+      @uptimerobot.editMonitor(params)
+      updated = true
+    end
+
+    updated
+  end
+
   private
 
   def describe_alert_contacts(attrs)

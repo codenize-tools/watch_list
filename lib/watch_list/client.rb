@@ -10,7 +10,6 @@ class WatchList::Client
     :HTTPPassword,
     :AlertContacts,
     :Interval,
-    :Status,
   ]
 
   def initialize(options = {})
@@ -71,7 +70,7 @@ class WatchList::Client
 
       if actual_monitor
         expected_monitor[:ID] = actual_monitor[:ID]
-        updated = walk_monitor(expected_monitor, actual_monitor) || updated
+        updated = walk_monitor(expected_monitor, actual_monitor, alert_contacts) || updated
       else
         updated = @driver.new_monitor(expected_monitor, alert_contacts) || updated
       end
@@ -84,7 +83,7 @@ class WatchList::Client
     updated
   end
 
-  def walk_monitor(expected, actual)
+  def walk_monitor(expected, actual, alert_contacts)
     updated = false
     delta = diff_monitor(expected, actual)
 
@@ -97,8 +96,7 @@ class WatchList::Client
         delta[key] ||= ''
       end
 
-      # XXX: update monitor
-      updated = true
+      updated = @driver.edit_monitor(expected[:ID], expected[:FriendlyName], delta, alert_contacts)
     end
 
     walk_monitor_paused(expected, actual) || updated
