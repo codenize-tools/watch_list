@@ -35,7 +35,7 @@ class WatchList::Client
     actual   = WatchList::Exporter.export(@uptimerobot, @options)
 
     updated = walk_alert_contacts(expected[:alert_contacts], actual[:alert_contacts])
-    walk_monitors(expected[:monitors], actual[:monitors]) || updated
+    walk_monitors(expected[:monitors], actual[:monitors], expected[:alert_contacts]) || updated
   end
 
   def walk_alert_contacts(expected, actual)
@@ -63,7 +63,7 @@ class WatchList::Client
     updated
   end
 
-  def walk_monitors(expected, actual)
+  def walk_monitors(expected, actual, alert_contacts)
     updated = false
 
     expected.each do |friendlyname, expected_monitor|
@@ -73,14 +73,12 @@ class WatchList::Client
         expected_monitor[:ID] = actual_monitor[:ID]
         updated = walk_monitor(expected_monitor, actual_monitor) || updated
       else
-        # XXX: create monitor
-        updated = true
+        updated = @driver.new_monitor(expected_monitor, alert_contacts) || updated
       end
     end
 
     actual.each do |friendlyname, monitor|
-      # XXX: delete monitor
-      updated = true
+      updated = @driver.delete_monitor(monitor) || updated
     end
 
     updated
