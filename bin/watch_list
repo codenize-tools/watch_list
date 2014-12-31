@@ -61,6 +61,27 @@ begin
   case mode
   when :export
     if split
+      logger.info('Export Uptime Robot')
+      output_file = DEFAULT_FILENAME if output_file == '-'
+      requires = []
+
+      client.export do |name, dsl|
+        robotfile = File.join(File.dirname(output_file), "#{name}.robot")
+        requires << robotfile
+        logger.info("  write `#{robotfile}`")
+
+        open(robotfile, 'wb') do |f|
+          f.puts dsl
+        end
+      end
+
+      logger.info("  write `#{output_file}`")
+
+      open(output_file, 'wb') do |f|
+        requires.each do |robotfile|
+          f.puts "require '#{File.basename robotfile}'"
+        end
+      end
     else
       if output_file == '-'
         logger.info('# Export Uptime Robot')

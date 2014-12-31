@@ -20,7 +20,15 @@ class WatchList::Client
 
   def export
     exported = WatchList::Exporter.export(@uptimerobot, @options)
-    WatchList::DSL.convert(exported, @options)
+
+    if block_given?
+      exported.each do |name, attrs|
+        dsl = WatchList::DSL.convert({name => attrs}, @options).strip
+        yield(name, dsl) unless dsl.empty?
+      end
+    else
+      WatchList::DSL.convert(exported, @options)
+    end
   end
 
   def apply(file)
