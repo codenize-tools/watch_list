@@ -52,14 +52,12 @@ class WatchList::Client
         expected_alert_contact[:ID] = actual_alert_contact[:ID]
         actual.delete_if(&selector)
       else
-        @driver.new_alert_contact(expected_alert_contact)
-        updated = true
+        updated = @driver.new_alert_contact(expected_alert_contact) || updated
       end
     end
 
     actual.each do |alert_contact|
-      @driver.delete_alert_contact(alert_contact)
-      updated = true
+      updated = @driver.delete_alert_contact(alert_contact) || updated
     end
 
     updated

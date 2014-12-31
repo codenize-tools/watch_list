@@ -1,3 +1,5 @@
+require 'logger'
+require 'singleton'
 require 'tempfile'
 require 'term/ansicolor'
 require 'uptimerobot'
@@ -6,6 +8,7 @@ module WatchList; end
 
 require 'watch_list/utils'
 require 'watch_list/constants'
+require 'watch_list/logger'
 
 require 'watch_list/client'
 require 'watch_list/driver'
