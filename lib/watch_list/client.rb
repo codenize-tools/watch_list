@@ -31,6 +31,10 @@ class WatchList::Client
     end
   end
 
+  def status
+    WatchList::Exporter.export_status(@uptimerobot, @options)
+  end
+
   def apply(file)
     walk(file)
   end

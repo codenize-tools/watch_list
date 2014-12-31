@@ -4,6 +4,7 @@ $: << File.expand_path("#{File.dirname __FILE__}/../lib")
 require 'rubygems'
 require 'watch_list'
 require 'optparse'
+require 'json'
 
 Version = WatchList::VERSION
 DEFAULT_FILENAME = 'Robotfile'
@@ -29,6 +30,7 @@ ARGV.options do |opt|
     opt.on('-e', '--export')          {    mode              = :export }
     opt.on(''  , '--split')           {    split             = true    }
     opt.on('-o', '--output FILE')     {|v| output_file       = v       }
+    opt.on('-s', '--status')          {    mode              = :status  }
     opt.on(''  , '--no-color')        {    options[:color]   = false   }
     opt.on(''  , '--debug')           {    options[:debug]   = true    }
 
@@ -107,6 +109,8 @@ begin
     else
       logger.info('No change'.intense_blue)
     end
+  when :status
+    puts JSON.pretty_generate(client.status)
   end
 rescue => e
   if options[:debug]
