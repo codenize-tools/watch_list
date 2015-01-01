@@ -1,4 +1,6 @@
+require 'base64'
 require 'logger'
+require 'openssl'
 require 'singleton'
 require 'tempfile'
 require 'term/ansicolor'
@@ -9,6 +11,7 @@ module WatchList; end
 require 'watch_list/utils'
 require 'watch_list/constants'
 require 'watch_list/logger'
+require 'watch_list/secure'
 
 require 'watch_list/client'
 require 'watch_list/driver'
