@@ -23,7 +23,7 @@ class WatchList::DSL::Converter
     [
       output_monitors(@exported[:monitors]),
       output_alert_contacts(@exported[:alert_contacts]),
-    ].join("\n\n")
+    ].join("\n\n").strip
   end
 
   private

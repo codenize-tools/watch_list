@@ -23,7 +23,7 @@ class WatchList::Client
 
     if block_given?
       exported.each do |name, attrs|
-        dsl = WatchList::DSL.convert({name => attrs}, @options).strip
+        dsl = WatchList::DSL.convert({name => attrs}, @options)
         yield(name, dsl) unless dsl.empty?
       end
     else
