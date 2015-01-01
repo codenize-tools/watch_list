@@ -4,6 +4,9 @@ watch_list is a tool to manage [Uptime Robot](https://uptimerobot.com/).
 
 It defines Uptime Robot monitors using Ruby DSL, and updates monitors according to DSL.
 
+[![Gem Version](https://badge.fury.io/rb/watch_list.svg)](http://badge.fury.io/rb/watch_list)
+[![Build Status](https://travis-ci.org/winebarrel/watch_list.svg?branch=master)](https://travis-ci.org/winebarrel/watch_list)
+
 ## Installation
 
 Add this line to your application's Gemfile:
