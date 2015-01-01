@@ -5,7 +5,7 @@ WATCH_LIST_TEST_API_KEY = ENV['WATCH_LIST_TEST_API_KEY']
 WATCH_LIST_TEST_PRIMARY_ALERT_CONTACT_ID = ENV['WATCH_LIST_TEST_PRIMARY_ALERT_CONTACT_ID']
 WATCH_LIST_TEST_EMAIL = ENV['WATCH_LIST_TEST_EMAIL']
 WATCH_LIST_TEST_EMAIL2 = ENV['WATCH_LIST_TEST_EMAIL2']
-APPLY_WAIT = 30
+LOOP_LIMIT = 60
 
 RSpec.configure do |config|
   config.before(:each) do
@@ -46,10 +46,9 @@ def wait_until(options, client = uptimerobot_client)
 
   exported = nil
 
-  loop do
+  loop_until do
     exported = export.call
-    break if yield(exported)
-    sleep 1
+    yield(exported)
   end
 
   exported
@@ -112,9 +111,8 @@ def cleanup_uptimerobot_monitor(client, options = {})
 
   return if options[:skip_wait]
 
-  loop do
-    break if get_monitors.call.length.zero?
-    sleep 1
+  loop_until do
+    get_monitors.call.length.zero?
   end
 end
 
@@ -133,8 +131,19 @@ def cleanup_uptimerobot_alert_contact(client, options = {})
 
   return if options[:skip_wait]
 
-  loop do
-    break if get_alert_contacts.call.length.zero?
+  loop_until do
+    get_alert_contacts.call.length.zero?
+  end
+end
+
+def loop_until
+  break_loop = false
+
+  LOOP_LIMIT.times do
+    break_loop = yield
+    break if break_loop
     sleep 1
   end
+
+  raise 'wait timeout' unless break_loop
 end

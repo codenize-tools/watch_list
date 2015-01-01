@@ -50,10 +50,6 @@ describe 'alert contact' do
           {:FriendlyName=>"http monitor",
            :URL=>"http://example.com",
            :Type=>1,
-           :SubType=>0,
-           :Port=>0,
-           :KeywordType=>nil,
-           :KeywordValue=>nil,
            :HTTPUsername=>nil,
            :HTTPPassword=>nil,
            :AlertContacts=>
@@ -93,10 +89,6 @@ describe 'alert contact' do
           {:FriendlyName=>"http monitor",
            :URL=>"http://example.com",
            :Type=>1,
-           :SubType=>0,
-           :Port=>0,
-           :KeywordType=>nil,
-           :KeywordValue=>nil,
            :HTTPUsername=>nil,
            :HTTPPassword=>nil,
            :AlertContacts=>
@@ -135,10 +127,6 @@ describe 'alert contact' do
           {:FriendlyName=>"http monitor",
            :URL=>"http://example.com",
            :Type=>1,
-           :SubType=>0,
-           :Port=>0,
-           :KeywordType=>nil,
-           :KeywordValue=>nil,
            :HTTPUsername=>nil,
            :HTTPPassword=>nil,
            :AlertContacts=>
