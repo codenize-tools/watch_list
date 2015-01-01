@@ -23,16 +23,18 @@ options = {
 
 ARGV.options do |opt|
   begin
-    opt.on('',   '--api-key API_KEY') {|v| options[:apiKey]  = v       }
-    opt.on('-a', '--apply')           {    mode              = :apply  }
-    opt.on('-f', '--file FILE')       {|v| file              = v       }
-    opt.on(''  , '--dry-run')         {    options[:dry_run] = true    }
-    opt.on('-e', '--export')          {    mode              = :export }
-    opt.on(''  , '--split')           {    split             = true    }
-    opt.on('-o', '--output FILE')     {|v| output_file       = v       }
+    opt.on(''  , '--api-key API_KEY') {|v| options[:apiKey]  = v        }
+    opt.on('-a', '--apply')           {    mode              = :apply   }
+    opt.on('-f', '--file FILE')       {|v| file              = v        }
+    opt.on(''  , '--dry-run')         {    options[:dry_run] = true     }
+    opt.on('-e', '--export')          {    mode              = :export  }
+    opt.on(''  , '--split')           {    split             = true     }
+    opt.on('-o', '--output FILE')     {|v| output_file       = v        }
     opt.on('-s', '--status')          {    mode              = :status  }
-    opt.on(''  , '--no-color')        {    options[:color]   = false   }
-    opt.on(''  , '--debug')           {    options[:debug]   = true    }
+    opt.on(''  , '--encrypt')         {    mode              = :encrypt }
+    opt.on(''  , '--decrypt')         {    mode              = :decrypt }
+    opt.on(''  , '--no-color')        {    options[:color]   = false    }
+    opt.on(''  , '--debug')           {    options[:debug]   = true     }
 
     opt.on('-h', '--help') do
       puts opt.help
@@ -46,7 +48,9 @@ ARGV.options do |opt|
       exit 1
     end
 
-    raise 'apiKey is required' unless options[:apiKey]
+    if [:apply, :export, :status].include?(mode) and not options[:apiKey]
+      raise 'apiKey is required'
+    end
   rescue => e
     $stderr.puts("[ERROR] #{e.message}")
     exit 1
@@ -111,6 +115,14 @@ begin
     end
   when :status
     puts JSON.pretty_generate(client.status)
+  when :encrypt
+    puts ARGV.map {|value|
+      WatchList::Secure.git_encrypt(value)[:secure]
+    }.join(' ')
+  when :decrypt
+    puts ARGV.map {|value|
+      WatchList::Secure.git_decrypt(:secure => value)
+    }.join(' ')
   end
 rescue => e
   if options[:debug]
