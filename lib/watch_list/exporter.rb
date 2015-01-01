@@ -45,31 +45,43 @@ class WatchList::Exporter
 
     monitors.each do |monitor|
       friendlyname = monitor['friendlyname']
-
-      # XXX: Port(4) returns `keywordtype=0`
-      keywordtype = nil_if_blank(monitor['keywordtype'], :to_i)
-      keywordtype = nil unless WatchList::Monitor::KeywordType.key(keywordtype)
+      type = monitor['type'].to_i
 
       monitor_hash[friendlyname] = {
         :ID            => monitor['id'],
         :FriendlyName  => friendlyname,
         :URL           => monitor['url'],
-        :Type          => monitor['type'].to_i,
-        :SubType       => nil_if_blank(monitor['subtype'], :to_i),
-        :Port          => nil_if_blank(monitor['port'], :to_i),
-        :KeywordType   => keywordtype,
-        :KeywordValue  => nil_if_blank(monitor['keywordvalue']),
-        :HTTPUsername  => nil_if_blank(monitor['httpusername']),
-        :HTTPPassword  => nil_if_blank(monitor['httppassword']),
+        :Type          => type,
         :AlertContacts => monitor.fetch('alertcontact', []).map {|alert_contact|
           {
-            :Type => alert_contact['type'].to_i,
+            :Type  => alert_contact['type'].to_i,
             :Value => alert_contact['value'],
           }
         },
         :Interval      => nil_if_blank(monitor['interval'], :to_i) / 60,
         :Status        => monitor['status'].to_i,
       }
+
+      case WatchList::Monitor::Type.key(type)
+      when 'http'
+        monitor_hash[friendlyname].update(
+          :HTTPUsername => nil_if_blank(monitor['httpusername']),
+          :HTTPPassword => nil_if_blank(monitor['httppassword']),
+        )
+      when 'keyword'
+        monitor_hash[friendlyname].update(
+          :KeywordType  => nil_if_blank(monitor['keywordtype'], :to_i),
+          :KeywordValue => nil_if_blank(monitor['keywordvalue']),
+          :HTTPUsername => nil_if_blank(monitor['httpusername']),
+          :HTTPPassword => nil_if_blank(monitor['httppassword']),
+        )
+      when 'ping'
+      when 'port'
+        monitor_hash[friendlyname].update(
+          :SubType => nil_if_blank(monitor['subtype'], :to_i),
+          :Port    => nil_if_blank(monitor['port'], :to_i),
+        )
+      end
     end
 
     monitor_hash
