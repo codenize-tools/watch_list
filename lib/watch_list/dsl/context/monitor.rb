@@ -23,7 +23,7 @@ class WatchList::DSL::Context::Monitor
 
   def target(value)
     raise %!Monitor `#{@name}`: "target" is invalid: #{value.inspect}! if value.nil?
-    @result[:URL] = value.to_s
+    @result[:URL] = WatchList::Secure.decrypt_if_possible(value).to_s
   end
 
   def interval(value)

@@ -28,6 +28,6 @@ class WatchList::DSL::Context::AlertContact
 
   def value(value)
     raise %!AlertContact: "value" is invalid: #{value.inspect}! if value.nil?
-    @result[:Value] = value.to_s
+    @result[:Value] = WatchList::Secure.decrypt_if_possible(value).to_s
   end
 end

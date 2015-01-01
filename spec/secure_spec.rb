@@ -1,14 +1,4 @@
 describe WatchList::Secure do
-  let(:obj) do
-    Class.new {
-      include WatchList::Secure
-
-      def method_missing(method_name, *args, &block)
-        send(method_name, *args, &block)
-      end
-    }.new
-  end
-
   let(:data) { '*secret data*' }
   let(:pass) { '**secret password**' }
   let(:salt) { 'nU0+G1icf70=' }
@@ -21,7 +11,7 @@ describe WatchList::Secure do
     end
 
     it do
-      expect(obj.git_encrypt(data)).to eq(secure: encrypted_data)
+      expect(described_class.git_encrypt(data)).to eq(secure: encrypted_data)
     end
 
     after do
@@ -36,7 +26,7 @@ describe WatchList::Secure do
     end
 
     it do
-      expect(obj.git_decrypt(secure: encrypted_data)).to eq data
+      expect(described_class.git_decrypt(secure: encrypted_data)).to eq data
     end
 
     after do
@@ -46,13 +36,13 @@ describe WatchList::Secure do
 
   describe '#encrypt' do
     it do
-      expect(obj.encrypt(pass, salt, data)).to eq encrypted_data
+      expect(described_class.encrypt(pass, salt, data)).to eq encrypted_data
     end
   end
 
   describe '#decrypt' do
     it do
-      expect(obj.decrypt(pass, salt, encrypted_data)).to eq data
+      expect(described_class.decrypt(pass, salt, encrypted_data)).to eq data
     end
   end
 
@@ -64,7 +54,7 @@ describe WatchList::Secure do
       end
 
       it do
-        expect(obj.git_encryptable?).to be_truthy
+        expect(described_class.git_encryptable?).to be_truthy
       end
 
       after do
@@ -74,18 +64,18 @@ describe WatchList::Secure do
 
     context 'when config is not set' do
       it do
-        expect(obj.git_encryptable?).to be_falsey
+        expect(described_class.git_encryptable?).to be_falsey
       end
     end
   end
 
   describe '#encrypted_value?' do
     it do
-      expect(obj.encrypted_value?(secure: nil)).to be_truthy
+      expect(described_class.encrypted_value?(secure: nil)).to be_truthy
     end
 
     it do
-      expect(obj.encrypted_value?(nil)).to be_falsey
+      expect(described_class.encrypted_value?(nil)).to be_falsey
     end
   end
 end

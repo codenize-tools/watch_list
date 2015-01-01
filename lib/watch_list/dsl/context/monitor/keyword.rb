@@ -24,7 +24,7 @@ class WatchList::DSL::Context::Monitor
 
     def keywordvalue(value)
       raise %!Monitor `#{@monitor_name}`: "keywordvalue" is invalid: #{value.inspect}! if value.nil?
-      @result[:KeywordValue] = value.to_s
+      @result[:KeywordValue] = WatchList::Secure.decrypt_if_possible(value).to_s
     end
   end
 end

@@ -77,6 +77,9 @@ class WatchList::DSL::Converter
       if WatchList::Monitor.const_defined?(key)
         const = WatchList::Monitor.const_get(key)
         buf << "    #{key.to_s.downcase} " + const.key(value).to_sym.inspect
+      elsif key == :HTTPPassword and WatchList::Secure.git_encryptable?
+        value = WatchList::Secure.git_encrypt(value).inspect.sub(/\A\{/, '').sub(/\}\z/, '')
+        buf << "    #{key.to_s.downcase} #{value}"
       else
         buf << "    #{key.to_s.downcase} #{value.inspect}"
       end
