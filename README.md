@@ -26,6 +26,8 @@ Or install it yourself as:
 ## Usage
 
 ```sh
+export WATCH_LIST_API_KEY=u956-afus321g565fghr519
+
 watch_list -e -o Robotfile
 vi Robotfile
 watch_list -a --dry-run
