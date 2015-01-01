@@ -118,7 +118,7 @@ class WatchList::Exporter
   end
 
   def normalize_monitor_log(monitor)
-    monitor['log'].map do |log|
+    monitor.fetch('log', []).map do |log|
       {
         :datetime => log['datetime'],
         :type     => WatchList::Log::Type.key(log['type'].to_i),
@@ -127,7 +127,7 @@ class WatchList::Exporter
   end
 
   def normalize_monitor_responsetime(monitor)
-    monitor['responsetime'].map do |responsetime|
+    monitor.fetch('responsetime', []).map do |responsetime|
       {
         :datetime => responsetime['datetime'],
         :value    => responsetime['value'].to_i,

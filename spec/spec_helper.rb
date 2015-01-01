@@ -39,7 +39,7 @@ def watch_list(options = {})
   end
 end
 
-def wait_until(options, client = uptimerobot_client)
+def wait_until(options = {}, client = uptimerobot_client)
   export = proc do
     WatchList::Exporter.export(client, options)
   end
