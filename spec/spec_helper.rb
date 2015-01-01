@@ -4,6 +4,7 @@ require 'tempfile'
 WATCH_LIST_TEST_API_KEY = ENV['WATCH_LIST_TEST_API_KEY']
 WATCH_LIST_TEST_PRIMARY_ALERT_CONTACT_ID = ENV['WATCH_LIST_TEST_PRIMARY_ALERT_CONTACT_ID']
 WATCH_LIST_TEST_EMAIL = ENV['WATCH_LIST_TEST_EMAIL']
+WATCH_LIST_TEST_EMAIL2 = ENV['WATCH_LIST_TEST_EMAIL2']
 APPLY_WAIT = 30
 
 RSpec.configure do |config|
@@ -55,10 +56,6 @@ def wait_until(options, client = uptimerobot_client)
 end
 
 def watch_list_export(options = {}, &block)
-  block ||= proc do |h|
-    h[:monitors].length > 0
-  end
-
   exported = wait_until(options, &block)
 
   unless options[:skip_normalize]
@@ -106,7 +103,10 @@ def cleanup_uptimerobot_monitor(client, options = {})
     client.getMonitors['monitors']['monitor']
   end
 
-  get_monitors.call.each do |monitor|
+  monitors = get_monitors.call
+  return if monitors.empty?
+
+  monitors.each do |monitor|
     client.deleteMonitor(monitorID: monitor['id'])
   end
 
@@ -124,7 +124,10 @@ def cleanup_uptimerobot_alert_contact(client, options = {})
     alert_contacts.select {|i| i['id'] != WATCH_LIST_TEST_PRIMARY_ALERT_CONTACT_ID }
   end
 
-  get_alert_contacts.call.each do |alert_contact|
+  alert_contacts = get_alert_contacts.call
+  return if alert_contacts.empty?
+
+  alert_contacts.each do |alert_contact|
     client.deleteAlertContact(alertContactID: alert_contact['id'])
   end
 
