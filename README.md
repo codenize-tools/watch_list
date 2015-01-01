@@ -1,6 +1,8 @@
-# WatchList
+# watch_list
 
-TODO: Write a gem description
+watch_list is a tool to manage [Uptime Robot](https://uptimerobot.com/).
+
+It defines Uptime Robot monitors using Ruby DSL, and updates monitors according to DSL.
 
 ## Installation
 
@@ -20,12 +22,75 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```sh
+watch_list -e -o Robotfile
+vi Robotfile
+watch_list -a --dry-run
+watch_list -a
+```
 
-## Contributing
+## Help
 
-1. Fork it ( https://github.com/[my-github-username]/watch_list/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+```
+Usage: watch_list [options]
+        --api-key API_KEY
+    -a, --apply
+    -f, --file FILE
+        --dry-run
+    -e, --export
+        --split
+    -o, --output FILE
+    -s, --status
+        --no-color
+        --debug
+    -h, --help
+```
+
+## Robotfile example
+
+```ruby
+monitor "http monitor" do
+  target "http://example.com"
+  interval 5
+  paused false
+  alert_contact :email, "alice@example.com"
+  type :http
+end
+
+monitor "keyword monitor" do
+  target "http://example.com"
+  interval 5
+  paused false
+  alert_contact :email, "alice@example.com"
+
+  type :keyword do
+    keywordtype :exists
+    keywordvalue "Example Domain"
+  end
+end
+
+monitor "ping monitor" do
+  target "127.0.0.1"
+  interval 5
+  paused false
+  alert_contact :email, "alice@example.com"
+  type :ping
+end
+
+monitor "port monitor" do
+  target "example.com"
+  interval 5
+  paused false
+  alert_contact :email, "alice@example.com"
+
+  type :port do
+    subtype :http
+    port 80
+  end
+end
+
+alert_contact do
+  type :email
+  value "alice@example.com"
+end
+```
