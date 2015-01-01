@@ -99,3 +99,25 @@ alert_contact do
   value "alice@example.com"
 end
 ```
+
+## Encryption
+
+```sh
+git config watch-list.pass "**secret password**"
+git config watch-list.salt "nU0+G1icf70="
+# openssl rand -base64 8
+```
+
+```ruby
+monitor "http monitor" do
+  target "http://example.com"
+  interval 5
+  paused false
+  alert_contact :email, "alice@example.com"
+
+  type :http do
+    httpusername "username"
+    httppassword :secure=>"A4wjNcr8xl71wVXqsIYuYQ=="
+  end
+end
+```
