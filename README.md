@@ -46,6 +46,8 @@ Usage: watch_list [options]
         --split
     -o, --output FILE
     -s, --status
+        --encrypt
+        --decrypt
         --no-color
         --debug
     -h, --help
@@ -106,6 +108,8 @@ end
 git config watch-list.pass "**secret password**"
 git config watch-list.salt "nU0+G1icf70="
 # openssl rand -base64 8
+
+watch_list --encrypt "secret value"
 ```
 
 ```ruby
@@ -117,7 +121,7 @@ monitor "http monitor" do
 
   type :http do
     httpusername "username"
-    httppassword :secure=>"A4wjNcr8xl71wVXqsIYuYQ=="
+    httppassword :secure=>"yI8mtdeyGrc16+wH9taw9g=="
   end
 end
 ```
