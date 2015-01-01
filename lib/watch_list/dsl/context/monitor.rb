@@ -52,7 +52,10 @@ class WatchList::DSL::Context::Monitor
 
     raise %!Monitor `#{@name}`: "alert_contact" value is invalid: #{value.inspect}! if value.nil?
 
-    hash = {:Type => alert_contact_type, :Value => value.to_s}
+    hash = {
+      :Type  => alert_contact_type,
+      :Value => WatchList::Secure.decrypt_if_possible(value).to_s,
+    }
 
     if @result[:AlertContacts].include?(hash)
       raise %!Monitor `#{@name}`: "alert_contact"(#{type}, #{value}) is already defined!
