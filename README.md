@@ -121,7 +121,7 @@ monitor "http monitor" do
 
   type :http do
     httpusername "username"
-    httppassword :secure=>"yI8mtdeyGrc16+wH9taw9g=="
+    httppassword secure: "yI8mtdeyGrc16+wH9taw9g=="
   end
 end
 ```
